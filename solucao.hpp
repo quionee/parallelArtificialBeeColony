@@ -18,6 +18,7 @@ class Solucao {
     public:
         Solucao(Grafo *grafo);
         ~Solucao();
+        double getSomatorioTotal();
         void buscaLocal();
         void imprimeSolucao();
 };

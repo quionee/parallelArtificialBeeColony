@@ -12,12 +12,9 @@ BuscaLocal::~BuscaLocal() {
 }
 
 void BuscaLocal::realizaBuscaLocal(std::vector<int> &solucao, std::vector<double> &arestas) {
-    int i = 0;
-    while (i < 5) {
-        optMove();
-        swapVertice();
-        ++i;
-    }
+    optMove();
+    swapVertice();
+
     solucao = this->solucao;
     arestas = this->arestas;
 }

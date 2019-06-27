@@ -17,9 +17,11 @@ Solucao::~Solucao() {
     arestas.clear();
 }
 
-void Solucao::solucaoInicial(Grafo *grafo) {
-    srand(time(NULL));
+double Solucao::getSomatorioTotal() {
+    return somatorioTotal;
+}
 
+void Solucao::solucaoInicial(Grafo *grafo) {
     int pos = rand() % qtdElementos;
 
     solucao.push_back(elementosForaDaRota[pos]);
@@ -41,7 +43,6 @@ void Solucao::solucaoInicial(Grafo *grafo) {
     arestas.push_back(matrizAdjacencia[solucao[posAresta]][solucao[0]]);
     somatorioTotal += arestas[posAresta];
 
-    std::cout << "\n\n----- Solucao inicial: -----\n";
     imprimeSolucao();
 }
 
@@ -49,7 +50,6 @@ void Solucao::buscaLocal() {
     BuscaLocal *buscaLocal = new BuscaLocal(solucao, arestas, matrizAdjacencia);
     buscaLocal->realizaBuscaLocal(solucao, arestas);
 
-    std::cout << "\n\n----- Solucao apos busca local: -----\n";
     imprimeSolucao();
 }
 
