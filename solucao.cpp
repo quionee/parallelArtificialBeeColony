@@ -17,8 +17,28 @@ Solucao::~Solucao() {
     arestas.clear();
 }
 
+std::vector<int> Solucao::getSolucao() {
+    return solucao;
+}
+
+std::vector<double> Solucao::getArestas() {
+    return arestas;
+}
+
 double Solucao::getSomatorioTotal() {
     return somatorioTotal;
+}
+
+void Solucao::setSolucao(std::vector<int> solucao) {
+    this->solucao = solucao;
+}
+
+void Solucao::setArestas(std::vector<double> arestas) {
+    this->arestas = arestas;
+}
+
+void Solucao::setSomatorioTotal(double somatorioTotal) {
+    this->somatorioTotal = somatorioTotal;
 }
 
 void Solucao::solucaoInicial(Grafo *grafo) {
@@ -42,15 +62,20 @@ void Solucao::solucaoInicial(Grafo *grafo) {
     }
     arestas.push_back(matrizAdjacencia[solucao[posAresta]][solucao[0]]);
     somatorioTotal += arestas[posAresta];
-
-    imprimeSolucao();
 }
 
 void Solucao::buscaLocal() {
     BuscaLocal *buscaLocal = new BuscaLocal(solucao, arestas, matrizAdjacencia);
     buscaLocal->realizaBuscaLocal(solucao, arestas);
 
-    imprimeSolucao();
+    realizaSomatorio();
+}
+
+void Solucao::realizaSomatorio() {
+    somatorioTotal = 0;
+    for (unsigned int i = 0; i < arestas.size(); ++i) {
+        somatorioTotal += arestas[i];
+    }
 }
 
 void Solucao::imprimeSolucao() {

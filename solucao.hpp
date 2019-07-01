@@ -15,10 +15,17 @@ class Solucao {
         double somatorioTotal;
         
         void solucaoInicial(Grafo *grafo);
+        void realizaSomatorio();
     public:
         Solucao(Grafo *grafo);
         ~Solucao();
+        std::vector<int> getSolucao();
+        std::vector<double> getArestas();
         double getSomatorioTotal();
+        void setSolucao(std::vector<int> solucao);
+        void setArestas(std::vector<double> arestas);
+        void setSomatorioTotal(double somatorioTotal);
+
         void buscaLocal();
         void imprimeSolucao();
 };
