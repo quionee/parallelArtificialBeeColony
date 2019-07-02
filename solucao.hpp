@@ -19,6 +19,7 @@ class Solucao {
     public:
         Solucao(Grafo *grafo);
         ~Solucao();
+        int getQtdElementos();
         std::vector<int> getSolucao();
         std::vector<double> getArestas();
         double getSomatorioTotal();

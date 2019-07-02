@@ -17,6 +17,10 @@ Solucao::~Solucao() {
     arestas.clear();
 }
 
+int Solucao::getQtdElementos() {
+    return qtdElementos;
+}
+
 std::vector<int> Solucao::getSolucao() {
     return solucao;
 }
