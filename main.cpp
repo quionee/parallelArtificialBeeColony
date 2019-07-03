@@ -8,13 +8,6 @@
 
 using namespace std;
 
-Grafo *leArquivo(string nomeArquivo);
-
-string nomeArquivo = "dsj1000.txt";
-Grafo *grafo = leArquivo(nomeArquivo);
-Solucao *melhorSolucao = new Solucao(grafo);
-double limitante;
-
 Grafo *leArquivo(string nomeArquivo) {
     ifstream arquivo;
     arquivo.open(nomeArquivo.c_str());
@@ -55,21 +48,19 @@ bool melhoraSolucao(Solucao* &solucao, double &probabilidade) {
     return true;
 }
 
-void executa(Solucao *solucao) {
-    // cout << "\n\nExecutando\n\n";
+void executa(Solucao *solucao, double limitante, Grafo *grafo, vector<int> &melhorRota,
+             vector<double> &melhorArestas, double &melhorSomatorio) {
     bool exclui = false;
-    time_t tempo = 1;
-    time_t inicio = time(NULL);
-    time_t fim;
+    int qtdIteracoes = 0;
     do {
         double probabilidade = 0, somatorioProbabilidade;
         if (!melhoraSolucao(solucao, probabilidade)) {
             exclui = true;
         }
-        if (solucao->getSomatorioTotal() < melhorSolucao->getSomatorioTotal()) {
-            melhorSolucao->setSolucao(solucao->getSolucao());
-            melhorSolucao->setArestas(solucao->getArestas());
-            melhorSolucao->setSomatorioTotal(solucao->getSomatorioTotal());
+        if (solucao->getSomatorioTotal() < melhorSomatorio) {
+            melhorRota = solucao->getSolucao();
+            melhorArestas = solucao->getArestas();
+            melhorSomatorio = solucao->getSomatorioTotal();
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
@@ -78,10 +69,10 @@ void executa(Solucao *solucao) {
 
         if ((solucao->getSomatorioTotal() / somatorioProbabilidade) > limitante) {
             melhoraSolucao(solucao, probabilidade);
-            if (solucao->getSomatorioTotal() < melhorSolucao->getSomatorioTotal()) {
-                melhorSolucao->setSolucao(solucao->getSolucao());
-                melhorSolucao->setArestas(solucao->getArestas());
-                melhorSolucao->setSomatorioTotal(solucao->getSomatorioTotal());
+            if (solucao->getSomatorioTotal() < melhorSomatorio) {
+                melhorRota = solucao->getSolucao();
+                melhorArestas = solucao->getArestas();
+                melhorSomatorio = solucao->getSomatorioTotal();
             }
         }
 
@@ -91,51 +82,71 @@ void executa(Solucao *solucao) {
             delete solucaoAux;
             solucao = new Solucao(grafo);
         }
-        fim = time(NULL);
-    } while (difftime(fim, inicio) < tempo);
+        ++qtdIteracoes;
+    } while (qtdIteracoes < 5);
 }
 
 int main(int argc, char **argv) {
+    time_t inicio = time(NULL);
+    time_t fim;
     srand(time(NULL));
+
+    string nomeArquivo = "a280.txt";
+    Grafo *grafo = leArquivo(nomeArquivo);
+
+    Solucao *melhorSolucao = new Solucao(grafo);
+    vector<int> melhorRota = melhorSolucao->getSolucao();
+    vector<double> melhorArestas = melhorSolucao->getArestas();
+    double melhorSomatorio = melhorSolucao->getSomatorioTotal();
+    delete melhorSolucao;
+
+    double melhorSomatorioGeral = 0;
+
+    double limitante;
 
     // inicializa o MPI
     MPI::Init(argc, argv);
 
     int tamanho = MPI::COMM_WORLD.Get_size();
     int processo = MPI::COMM_WORLD.Get_rank();
-    // int intervalo = qtdSolucoesIniciais;
 
-    int qtdSolucoesIniciais;
     if (processo == 0) {
-        cout << "\nQuantidade de solucoes iniciais: ";
-        cin >> qtdSolucoesIniciais;
-        limitante = 1.0 / qtdSolucoesIniciais;
-        // cout << "\n\ngrafo: " << grafo->getQtdElementos() << endl;
+        limitante = 1.0 / tamanho;
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
-    MPI_Bcast(&qtdSolucoesIniciais, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-    // cout << "\n\ntamanho: " << tamanho
-    //      << "\n\nprocesso: " << processo;
-
-    // if (processo == 2) {
-    //     cout << "\n\n\nQTJSAF: " << qtdSolucoesIniciais << endl;
-    //     cout << "\n\ngrafo2222: " << grafo->getQtdElementos() << endl;
-    // }
+    MPI_Bcast(&limitante, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     for (int i = 0; i < tamanho; ++i) {
         if (processo == i) {
             Solucao *solucao = new Solucao(grafo);
-            cout << "\n\ni " << i << ": " << solucao << endl;
-            executa(solucao);
+            executa(solucao, limitante, grafo, melhorRota, melhorArestas, melhorSomatorio);
         }
     }
     
     MPI_Barrier(MPI_COMM_WORLD);
-    if (processo == 0) {
-        melhorSolucao->imprimeSolucao();
+    MPI_Reduce(&melhorSomatorio, &melhorSomatorioGeral, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&melhorSomatorioGeral, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+    if (melhorSomatorio == melhorSomatorioGeral) {
+        MPI_Bcast(&melhorRota, melhorRota.size(), MPI_INT, processo, MPI_COMM_WORLD);
     }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+    if (processo == 0) {
+        cout << "\n\nRota: ";
+        for (unsigned int i = 0; i < melhorRota.size(); ++i) {
+            cout << melhorRota[i] << " ";
+        }
+        cout << "\n\nSomatorio total: " << melhorSomatorioGeral << "\n\n";
+
+        fim = time(NULL);
+        cout << "Tempo de execução em segundos: " << difftime(fim, inicio) << endl;
+    }
+    
     MPI::Finalize();
+    
+    delete grafo;
+
     return 0;
 }
