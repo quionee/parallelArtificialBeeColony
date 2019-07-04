@@ -26,13 +26,6 @@ Grafo::Grafo(int qtdElementos, double **coordenadas) {
         }
     }
 
-    // cout << "\n\nARESTAS\n\n";
-    // for (int i = 0; i < qtdArestas; ++i) {
-    //     cout << arestasElementos[i][0] << " "
-    //          << arestasElementos[i][1] << " "
-    //          << arestasValor[i] << endl;
-    // }
-
     matrizAdjacencia = new double*[qtdElementos];
     for (int lin = 0; lin < qtdElementos; ++lin) {
         matrizAdjacencia[lin] = new double[qtdElementos];
@@ -42,14 +35,6 @@ Grafo::Grafo(int qtdElementos, double **coordenadas) {
         matrizAdjacencia[arestasElementos[i][0]][arestasElementos[i][1]] = arestasValor[i];
         matrizAdjacencia[arestasElementos[i][1]][arestasElementos[i][0]] = arestasValor[i];
     }
-
-    // cout << "\n\nmatriz adjacencia\n\n";
-    // for (int lin = 0; lin < qtdElementos; ++lin) {
-    //     for (int col = 0; col < qtdElementos; ++col) {
-    //         cout << matrizAdjacencia[lin][col] << " ";
-    //     }
-    //     cout << endl;
-    // }
 }
 
 Grafo::~Grafo() {
