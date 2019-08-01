@@ -1,5 +1,5 @@
 APPLICATION = main
-CXXFLAGS = -Wall -I. -DVART_OGL -DIL_LIB -std=c++11
+CXXFLAGS = -O3 -Wall -I. -DVART_OGL -DIL_LIB -std=c++11
 CXX = mpic++
 LDFLAGS = 
 LDLIBS = 
