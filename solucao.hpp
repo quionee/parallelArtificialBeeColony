@@ -15,7 +15,7 @@ class Solucao {
         double somatorioTotal;
         
         void solucaoInicial(Grafo *grafo);
-        void realizaSomatorio();
+        void realizarSomatorio();
     public:
         Solucao(Grafo *grafo);
         ~Solucao();
@@ -28,7 +28,7 @@ class Solucao {
         void setSomatorioTotal(double somatorioTotal);
 
         void buscaLocal();
-        void imprimeSolucao();
+        void imprimirSolucao();
 };
 
 #endif

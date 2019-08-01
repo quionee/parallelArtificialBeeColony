@@ -3,13 +3,13 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include "mpi.h"		// import da biblioteca mpi
+#include "mpi.h"        // import da biblioteca mpi
 #include "solucao.hpp"
 
 using namespace std;
 
-// função gera o grafo para a instância do arquivo
-Grafo *leArquivo(string nomeArquivo) {
+// função que gera o grafo para a instância do arquivo
+Grafo *lerArquivo(string nomeArquivo) {
     ifstream arquivo;
     arquivo.open(nomeArquivo.c_str());
 
@@ -109,8 +109,8 @@ int main(int argc, char **argv) {
     time_t fim;
     srand(time(NULL));
 
-    string nomeArquivo = "dsj1000.txt";        // entrada do arquivo com a instância
-    Grafo *grafo = leArquivo(nomeArquivo);  // gera o grafo com a instância do aquivo
+    string pastaInstancias = "instancias/";
+    Grafo *grafo = lerArquivo(pastaInstancias + argv[1]);  // gera o grafo com a instância do aquivo
 
     Solucao *melhorSolucao = new Solucao(grafo);
     vector<int> melhorRota = melhorSolucao->getSolucao();

@@ -19,7 +19,7 @@ class BuscaLocal {
     public:
         BuscaLocal(std::vector<int> &solucao, std::vector<double> &arestas, double **matrizAdjacencia);
         ~BuscaLocal();
-        void realizaBuscaLocal(std::vector<int> &solucao, std::vector<double> &arestas);
+        void realizarBuscaLocal(std::vector<int> &solucao, std::vector<double> &arestas);
 };
 
 #endif

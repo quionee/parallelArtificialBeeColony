@@ -45,6 +45,7 @@ void Solucao::setSomatorioTotal(double somatorioTotal) {
     this->somatorioTotal = somatorioTotal;
 }
 
+// A solução inicial utilizada foi a de Inserção Aleatória
 void Solucao::solucaoInicial(Grafo *grafo) {
     int pos = rand() % qtdElementos;
 
@@ -70,19 +71,19 @@ void Solucao::solucaoInicial(Grafo *grafo) {
 
 void Solucao::buscaLocal() {
     BuscaLocal *buscaLocal = new BuscaLocal(solucao, arestas, matrizAdjacencia);
-    buscaLocal->realizaBuscaLocal(solucao, arestas);
+    buscaLocal->realizarBuscaLocal(solucao, arestas);
 
-    realizaSomatorio();
+    realizarSomatorio();
 }
 
-void Solucao::realizaSomatorio() {
+void Solucao::realizarSomatorio() {
     somatorioTotal = 0;
     for (unsigned int i = 0; i < arestas.size(); ++i) {
         somatorioTotal += arestas[i];
     }
 }
 
-void Solucao::imprimeSolucao() {
+void Solucao::imprimirSolucao() {
     std::cout << "\n\nRota: ";
     for (unsigned int i = 0; i < solucao.size(); ++i) {
         std::cout << solucao[i] << " ";

@@ -11,7 +11,7 @@ BuscaLocal::~BuscaLocal() {
     
 }
 
-void BuscaLocal::realizaBuscaLocal(std::vector<int> &solucao, std::vector<double> &arestas) {
+void BuscaLocal::realizarBuscaLocal(std::vector<int> &solucao, std::vector<double> &arestas) {
     optMove();
     swapVertice();
 
